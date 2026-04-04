@@ -13,6 +13,8 @@ A government marketing and information website for SITC (Sindh Information Techn
 
 **Core constraint:** `git clone` → `./setup.sh` → site is live. No external cloud dependencies. All data local.
 
+**Note on setup.sh:** First run generates `.env` with random secrets and exits — operator edits `SITE_DOMAIN` and `ADMIN_EMAIL`, then re-runs. This is a deliberate two-step: secrets should never be hardcoded defaults.
+
 ---
 
 ## 2. Architecture
@@ -61,6 +63,8 @@ Three containers total: Caddy (reverse proxy + auto-HTTPS), the app (Next.js + P
 - Automatic HTTPS (Let's Encrypt) with zero config — just set the domain
 - Simpler config file for a straightforward reverse proxy setup
 - If SITC provides their own cert instead, Caddy handles that too
+
+**Health check endpoint:** `GET /api/health` — returns `{ status: 'ok', db: 'connected' }`. Implemented as a custom Next.js API route at `src/app/api/health/route.ts`. Checks PostgreSQL connectivity. Used by `setup.sh` to wait for the app, and by Docker healthcheck.
 
 ---
 
@@ -169,7 +173,12 @@ global-settings: {
 }
 
 homepage: {
-  hero: { headline, subheading, primaryCTA, secondaryCTA, background } // all localized
+  hero: {
+    headline, subheading, primaryCTA, secondaryCTA, // all localized
+    background (upload → media),
+    heroVideo (upload → media, optional, video MIME types only),  // V3 hero bg video
+    heroPoster (upload → media, optional),  // fallback image for video
+  }
   audienceCards → relation
   impactStats → relation
   featuredProducts → relation
@@ -374,7 +383,10 @@ import { LanguageToggle } from '@/components/shared/LanguageToggle'
   background: '#0A0A0A',  // Off-Black
   surface: '#141414',
   text: '#FFFFFF',
-  fonts: { heading: 'Clash Display', body: 'Inter', urdu: 'Noto Naskh Arabic' },
+  fonts: { heading: 'Syne', body: 'Inter', urdu: 'Noto Naskh Arabic' },
+  // Note: PRD specified Clash Display but it requires a paid license.
+  // Syne is open-source (OFL), geometric, bold — same visual impact.
+  // Alternatives considered: DM Sans, Space Grotesk.
   heroFontSize: '72px',
 }
 ```
@@ -408,6 +420,7 @@ src/app/
     terms/page.tsx                    Terms of Use
     accessibility/page.tsx            Accessibility Statement
 
+  page.tsx                            Root / — variant selector or redirect
   v1/[lang]/[...slug]/page.tsx       Variant A routes (same pages, civic theme)
   v2/[lang]/[...slug]/page.tsx       Variant B routes (accessible theme)
   v3/[lang]/[...slug]/page.tsx       Variant C routes (bold theme)
@@ -415,6 +428,21 @@ src/app/
   (payload)/admin/                    CMS admin panel (Payload)
   api/                                Payload API + custom routes
 ```
+
+---
+
+### Root URL Behavior
+
+Controlled by `ACTIVE_VARIANT` in `.env`:
+
+```
+ACTIVE_VARIANT=none    # Shows variant selector page (3 buttons: Civic Tech / Accessible / Bold Digital)
+ACTIVE_VARIANT=v1      # Redirects / → /v1 (Civic Tech is the live site)
+ACTIVE_VARIANT=v2      # Redirects / → /v2
+ACTIVE_VARIANT=v3      # Redirects / → /v3
+```
+
+Default: `none` (variant selector). When SITC picks a variant, ops changes one env var and restarts. The selector page is a simple static page — no CMS dependency.
 
 ---
 
@@ -508,8 +536,12 @@ if [ ! -f .env ]; then
     cp .env.example .env
     sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
     sed -i "s|^PAYLOAD_SECRET=.*|PAYLOAD_SECRET=$(openssl rand -hex 32)|" .env
+    GENERATED_PASS=$(openssl rand -base64 12)
+    sed -i "s|^ADMIN_PASSWORD=.*|ADMIN_PASSWORD=${GENERATED_PASS}|" .env
     echo ""
     echo "Generated .env with random secrets."
+    echo "  Admin password: ${GENERATED_PASS}"
+    echo ""
     echo "Edit SITE_DOMAIN and ADMIN_EMAIL before proceeding."
     echo "Then re-run: ./setup.sh"
     exit 0
@@ -548,6 +580,9 @@ services:
       DATABASE_URL: postgresql://sitc:${DB_PASSWORD}@postgres:5432/sitc
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       PAYLOAD_PUBLIC_SERVER_URL: https://${SITE_DOMAIN}
+      ACTIVE_VARIANT: ${ACTIVE_VARIANT:-none}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USER: ${SMTP_USER:-}
@@ -555,7 +590,13 @@ services:
       SMTP_FROM: noreply@${SITE_DOMAIN}
       NODE_ENV: production
     volumes:
-      - uploads:/app/uploads
+      - ./uploads:/app/uploads         # bind mount — ops can access files directly
+      - nextcache:/app/.next/cache     # persist ISR cache across restarts
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     depends_on:
       postgres:
         condition: service_healthy
@@ -590,7 +631,7 @@ services:
 
 volumes:
   pgdata:
-  uploads:
+  nextcache:
   caddy_data:
 ```
 
@@ -608,7 +649,7 @@ Domain in `.env`, Caddyfile references `{$SITE_DOMAIN}`.
 | File uploads | MIME whitelist (images + PDF), max 5MB (resumes), 20MB (tender docs), filename sanitization |
 | XSS | React auto-escapes; Payload rich text uses safe serializer |
 | SQL injection | Drizzle ORM with parameterized queries |
-| Rate limiting | Public forms: 5 req/IP/hour (applications), 3 req/IP/hour (contact) |
+| Rate limiting | Public forms: 5 req/IP/hour (applications), 10 req/IP/hour (contact — higher to allow resubmission after typos) |
 | HTTPS | Enforced via Caddy (auto-HTTPS or provided cert) |
 | CSRF | Payload includes CSRF protection for admin |
 | Secrets | All in `.env`, gitignored. `setup.sh` generates random secrets. |
@@ -650,6 +691,8 @@ Nodemailer with configurable SMTP. Works with any provider: government mail serv
 
 If SMTP isn't configured, contact form submissions are stored in Payload only — no email. Admin can review in the CMS. Email delivery configured later when SITC provides SMTP credentials.
 
+**SMTP failure at runtime** (configured but unreachable): retry 3 times with exponential backoff (1s, 5s, 15s). If all retries fail, log the error and rely on the Payload-stored submission as fallback. Submission still returns success to the user — email delivery is best-effort, not blocking.
+
 Email templates: React Email components rendered to HTML.
 
 ---
@@ -684,7 +727,36 @@ Email templates: React Email components rendered to HTML.
 
 ---
 
-## 17. Task Breakdown (Preview)
+## 17. Backup Strategy
+
+Minimum viable: a `scripts/backup.sh` that runs `pg_dump` and copies uploads.
+
+```bash
+#!/bin/bash
+BACKUP_DIR=${BACKUP_DIR:-/backups/sitc}
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+mkdir -p $BACKUP_DIR
+
+# Database
+docker compose -f docker-compose.prod.yml exec -T postgres \
+  pg_dump -U sitc sitc | gzip > "$BACKUP_DIR/db-$TIMESTAMP.sql.gz"
+
+# Uploads
+tar -czf "$BACKUP_DIR/uploads-$TIMESTAMP.tar.gz" ./uploads/
+
+# Retain last 30 days
+find $BACKUP_DIR -name "*.gz" -mtime +30 -delete
+
+echo "Backup complete: $BACKUP_DIR/*-$TIMESTAMP.*"
+```
+
+Ops adds a cron: `0 2 * * * /path/to/sitc-website-2/scripts/backup.sh`
+
+This is documented in the deployment guide, not automated in `setup.sh` — backup location and schedule are ops decisions.
+
+---
+
+## 18. Task Breakdown (Preview)
 
 Will create detailed GitHub issues after CTO approval.
 
