@@ -143,12 +143,14 @@ Homepage
   - AC: Stats are editable via CMS without a code deployment
 
 **Products & Services**
-- [ ] Product card grid with consistent schema: name, status badge (LIVE / UPCOMING / BETA), one-line description, impact stat (where available), CTA
+- [ ] Product card grid with consistent schema: name, status badge (LIVE / UPCOMING / BETA), one-line description, impact stat (where available), audience tag(s), CTA
   - AC: All 6 existing products are listed; status badge is colour-coded
+- [ ] Each product has one or more audience tags: Citizens, Businesses, Government Bodies, Tech Partners
+  - AC: The Products & Services page includes an audience filter (tab or dropdown); selecting an audience shows only relevant products; default view shows all. This connects the audience cards on the homepage directly to filtered product views.
 - [ ] Each product card links to an expanded product detail page
-  - AC: Product detail page includes: full description, what it does (bullets), who it's for, impact data, and link to the actual service (external URL)
-- [ ] Admin can add, edit, remove product cards and toggle status via CMS
-  - AC: Changes go live within 60 seconds of saving in CMS
+  - AC: Product detail page includes: full description, what it does (bullets), who it's for (audience tags), impact data, and link to the actual service (external URL)
+- [ ] Admin can add, edit, remove product cards, toggle status, and assign audience tags via CMS
+  - AC: Changes go live across the site within 60 seconds of saving in CMS
 
 **About**
 - [ ] Mission, Vision, Mandate, Core Values sections as per content brief
@@ -170,19 +172,32 @@ Homepage
 **Multilingual**
 - [ ] Urdu language toggle — full site translation
   - AC: Toggle persists across pages via localStorage; all static content is translated; dynamic CMS content supports Urdu input fields
+- [ ] Sindhi language toggle — full site translation
+  - AC: Same behaviour as Urdu toggle; Sindhi content fields available in CMS; initial translations LLM-generated and reviewed before publish
+
+**Variant Selection (pre-promotion)**
+- [ ] Root URL `/` before a variant is promoted to root must display a variant selection page
+  - AC: Page shows three clearly labelled buttons — "Version 1", "Version 2", "Version 3" — each linking to `/v1`, `/v2`, `/v3` respectively. No redirect happens automatically. Once a variant is promoted (config change), the root serves that variant directly and the selection page is no longer shown.
+
+**Global Content Freshness**
+- [ ] CMS saves must be reflected site-wide within 60 seconds — applies to all content types (products, team, newsroom, homepage, stats, contact), not just products
+  - AC: After any CMS save, all affected pages update within 60 seconds with no manual deployment required
+
+**Contact Form**
+- [ ] SMTP configuration must be externalised and admin-configurable (host, port, username, password, from-address)
+  - AC: SMTP settings are stored in the server config (not hardcoded); if SMTP is unavailable, form submission is queued locally and retried; user sees a success message regardless; admin is notified of delivery failure via a fallback log or alert
 
 **Accessibility**
 - [ ] WCAG 2.1 AA compliance across all pages
   - AC: Lighthouse accessibility score ≥ 90 on all key pages
-- [ ] Accessibility Statement page live at launch
+- [ ] Accessibility Statement page live at launch — owned by SITC Admin team, reviewed annually
+  - AC: Page is live at `/accessibility`; includes: commitment statement, known limitations (if any), contact method for accessibility issues, and last review date
 
 **CMS (see full CMS section below)**
 
 ---
 
 ### Should Have (P1) — Shortly After Launch
-
-- [ ] Sindhi language toggle (third language, after Urdu)
 - [ ] Tenders & Procurement page: list of active tenders with PDF downloads, submission deadline, and status (open/closed/awarded)
   - AC: Admin can post and close tender listings; closed tenders show "Awarded" or "Closed" badge
 - [ ] Transparency / Impact Dashboard: visual counters for key metrics, updated via CMS
@@ -240,7 +255,7 @@ A single CMS powers all three design variants. The design theme is a configurati
 
 **3. Products & Services**
 - Add / edit / archive product cards
-- Per product: name, status (LIVE / UPCOMING / BETA), short description, long description, what-it-does bullets, impact stat, service URL (external), thumbnail image, category tag
+- Per product: name, status (LIVE / UPCOMING / BETA), short description, long description, what-it-does bullets, impact stat, service URL (external), thumbnail image, category tag, audience tags (multi-select: Citizens / Businesses / Government Bodies / Tech Partners)
 - Reorder products via drag-and-drop
 
 **4. Team & Governance**
