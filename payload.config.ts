@@ -5,6 +5,23 @@ import sharp from 'sharp'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+import { Products } from './src/collections/Products'
+import { Articles } from './src/collections/Articles'
+import { Tenders } from './src/collections/Tenders'
+import { ImpactStats } from './src/collections/ImpactStats'
+import { AudienceCards } from './src/collections/AudienceCards'
+import { Media } from './src/collections/Media'
+import { Users } from './src/collections/Users'
+
+import { GlobalSettings } from './src/globals/GlobalSettings'
+import { Homepage } from './src/globals/Homepage'
+import { About } from './src/globals/About'
+import { Contact } from './src/globals/Contact'
+import { DigitalGovernment } from './src/globals/DigitalGovernment'
+import { Partnerships } from './src/globals/Partnerships'
+import { Transparency } from './src/globals/Transparency'
+import { StaticPages } from './src/globals/StaticPages'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -12,7 +29,25 @@ export default buildConfig({
   admin: {
     user: 'users',
   },
-  collections: [],
+  collections: [
+    Media,
+    Users,
+    Products,
+    Articles,
+    Tenders,
+    ImpactStats,
+    AudienceCards,
+  ],
+  globals: [
+    GlobalSettings,
+    Homepage,
+    About,
+    Contact,
+    DigitalGovernment,
+    Partnerships,
+    Transparency,
+    StaticPages,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? '',
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL ?? '',
