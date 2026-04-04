@@ -134,7 +134,7 @@ contact-submissions: {
   name, email, subject, message, read (boolean)
 }
 
-// Tenders (P1)
+// Tenders (P0)
 tenders: {
   title (localized), referenceNumber, description (localized),
   deadline, document (upload → PDF), tenderStatus: open | closed | awarded
@@ -220,7 +220,9 @@ static-pages: {  // or separate globals per page
 |---|---|
 | super_admin | Everything — content, settings, users, theme config |
 | content_editor | Collections: products, articles, team-members, impact-stats. Globals: homepage, about, contact, newsroom content. Cannot manage users or settings. |
-| hr_admin | Collections: jobs, applications. Can view/export applications. |
+| hr_admin | Collections: jobs, applications, team-members. Can view/export applications and manage team bios/photos. |
+
+**Note:** Role permissions are configurable in Payload's access control — super_admin can adjust what each role can access without code changes.
 | viewer | Read-only access to all content. Can preview drafts. |
 
 ---
@@ -406,7 +408,7 @@ src/app/
     digital-government/page.tsx       Transformation + Roadmap
     partnerships/
       page.tsx                        PPP content
-      tenders/page.tsx                Tender listings (P1)
+      tenders/page.tsx                Tender listings (P0)
     governance/page.tsx               Board + Management team
     transparency/page.tsx             Impact dashboard + annual reports (P1)
     newsroom/
@@ -779,7 +781,7 @@ Will create detailed GitHub issues after CTO approval.
 | 15 | Contact form — submission, Payload storage, email (if SMTP configured) | Small | 2, 6 | Rate limited |
 | 16 | ISR + Payload afterChange hooks | Small | 2, 3 | Per-path revalidation |
 | 17 | Seed script — all collections, globals, translations | Medium | 2, 3, 4 | Idempotent |
-| 18 | Tenders page (P1) | Small | 2 | PDF upload, status badges |
+| 18 | Tenders page (P0) | Medium | 2, 6 | PDF upload, status badges, deadline auto-close |
 | 19 | Transparency page (P1) | Small | 3 | Impact dashboard, annual reports |
 | 20 | Accessibility audit — WCAG 2.1 AA all variants | Medium | 8, 9, 10 | axe-core + Lighthouse |
 | 21 | Docker prod setup + setup.sh + deployment docs | Medium | All | The "clone and run" experience |
