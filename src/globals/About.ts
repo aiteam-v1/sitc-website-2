@@ -47,6 +47,7 @@ export const About: GlobalConfig = {
         {
           name: 'icon',
           type: 'text',
+      localized: true,
         },
       ],
     },

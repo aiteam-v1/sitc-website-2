@@ -27,6 +27,7 @@ export const Tenders: CollectionConfig = {
     {
       name: 'referenceNumber',
       type: 'text',
+      localized: true,
       required: true,
       unique: true,
     },

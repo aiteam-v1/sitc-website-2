@@ -22,6 +22,7 @@ export const Transparency: GlobalConfig = {
         {
           name: 'title',
           type: 'text',
+      localized: true,
         },
         {
           name: 'year',

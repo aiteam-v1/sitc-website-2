@@ -14,6 +14,7 @@ export const GlobalSettings: GlobalConfig = {
     {
       name: 'siteName',
       type: 'text',
+      localized: true,
       required: true,
     },
     {
@@ -34,10 +35,12 @@ export const GlobalSettings: GlobalConfig = {
     {
       name: 'contactEmail',
       type: 'text',
+      localized: true,
     },
     {
       name: 'contactPhone',
       type: 'text',
+      localized: true,
     },
     {
       name: 'contactAddress',
@@ -49,18 +52,24 @@ export const GlobalSettings: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'twitter', type: 'text' },
+      localized: true,
         { name: 'facebook', type: 'text' },
+      localized: true,
         { name: 'linkedin', type: 'text' },
+      localized: true,
         { name: 'youtube', type: 'text' },
+      localized: true,
       ],
     },
     {
       name: 'analyticsId',
       type: 'text',
+      localized: true,
     },
     {
       name: 'seoTitleFormat',
       type: 'text',
+      localized: true,
     },
     {
       name: 'seoDefaultOgImage',

@@ -27,6 +27,7 @@ export const ImpactStats: CollectionConfig = {
     {
       name: 'value',
       type: 'text',
+      localized: true,
       required: true,
     },
     {

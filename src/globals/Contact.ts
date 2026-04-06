@@ -18,6 +18,7 @@ export const Contact: GlobalConfig = {
     {
       name: 'mapEmbedUrl',
       type: 'text',
+      localized: true,
     },
     {
       name: 'departments',
@@ -31,6 +32,7 @@ export const Contact: GlobalConfig = {
         {
           name: 'email',
           type: 'text',
+      localized: true,
         },
       ],
     },
@@ -39,9 +41,13 @@ export const Contact: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'twitter', type: 'text' },
+      localized: true,
         { name: 'facebook', type: 'text' },
+      localized: true,
         { name: 'linkedin', type: 'text' },
+      localized: true,
         { name: 'youtube', type: 'text' },
+      localized: true,
       ],
     },
   ],

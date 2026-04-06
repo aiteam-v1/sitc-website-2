@@ -17,6 +17,7 @@ export const Media: CollectionConfig = {
     {
       name: 'altText',
       type: 'text',
+      localized: true,
     },
   ],
 }
