@@ -12,7 +12,7 @@ export const ImpactStats: CollectionConfig = {
     useAsTitle: 'label',
   },
   access: {
-    read: isNotHrAdmin,
+    read: () => true,
     create: isContentEditorOrAbove,
     update: isContentEditorOrAbove,
     delete: isSuperAdmin,

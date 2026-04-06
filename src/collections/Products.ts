@@ -12,7 +12,7 @@ export const Products: CollectionConfig = {
     useAsTitle: 'name',
   },
   access: {
-    read: isNotHrAdmin,
+    read: () => true,
     create: isContentEditorOrAbove,
     update: isContentEditorOrAbove,
     delete: isSuperAdmin,

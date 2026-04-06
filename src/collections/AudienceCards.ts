@@ -12,7 +12,7 @@ export const AudienceCards: CollectionConfig = {
     useAsTitle: 'headline',
   },
   access: {
-    read: isNotHrAdmin,
+    read: () => true,
     create: isContentEditorOrAbove,
     update: isContentEditorOrAbove,
     delete: isSuperAdmin,

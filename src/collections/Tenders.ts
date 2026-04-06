@@ -12,7 +12,7 @@ export const Tenders: CollectionConfig = {
     drafts: true,
   },
   access: {
-    read: isNotHrAdmin,
+    read: () => true,
     create: isContentEditorOrAbove,
     update: isContentEditorOrAbove,
     delete: isSuperAdmin,

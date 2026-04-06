@@ -6,7 +6,7 @@ const isContentEditorOrAbove = ({ req: { user } }: any) =>
 export const StaticPages: GlobalConfig = {
   slug: 'static-pages',
   access: {
-    read: isContentEditorOrAbove,
+    read: () => true,
     update: isContentEditorOrAbove,
   },
   fields: [

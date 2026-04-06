@@ -6,7 +6,7 @@ const isContentEditorOrAbove = ({ req: { user } }: any) =>
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
   access: {
-    read: isContentEditorOrAbove,
+    read: () => true,
     update: isContentEditorOrAbove,
   },
   fields: [

@@ -6,7 +6,7 @@ const isContentEditorOrAbove = ({ req: { user } }: any) =>
 export const Partnerships: GlobalConfig = {
   slug: 'partnerships',
   access: {
-    read: isContentEditorOrAbove,
+    read: () => true,
     update: isContentEditorOrAbove,
   },
   fields: [

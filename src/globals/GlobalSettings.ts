@@ -7,7 +7,7 @@ const isContentEditorOrAbove = ({ req: { user } }: any) =>
 export const GlobalSettings: GlobalConfig = {
   slug: 'global-settings',
   access: {
-    read: isContentEditorOrAbove,
+    read: () => true,
     update: isSuperAdmin,
   },
   fields: [

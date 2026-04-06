@@ -13,7 +13,7 @@ export const Articles: CollectionConfig = {
     maxPerDoc: 10,
   },
   access: {
-    read: isNotHrAdmin,
+    read: () => true,
     create: isContentEditorOrAbove,
     update: isContentEditorOrAbove,
     delete: isSuperAdmin,
