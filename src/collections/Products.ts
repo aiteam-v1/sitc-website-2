@@ -27,6 +27,7 @@ export const Products: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
+      localized: true,
       required: true,
       unique: true,
     },
@@ -58,6 +59,7 @@ export const Products: CollectionConfig = {
         {
           name: 'feature',
           type: 'text',
+      localized: true,
         },
       ],
     },
@@ -74,10 +76,12 @@ export const Products: CollectionConfig = {
     {
       name: 'impactStatValue',
       type: 'text',
+      localized: true,
     },
     {
       name: 'serviceUrl',
       type: 'text',
+      localized: true,
     },
     {
       name: 'thumbnail',
@@ -87,6 +91,7 @@ export const Products: CollectionConfig = {
     {
       name: 'category',
       type: 'text',
+      localized: true,
     },
     {
       name: 'audienceTags',

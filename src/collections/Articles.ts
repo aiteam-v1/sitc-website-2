@@ -28,6 +28,7 @@ export const Articles: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
+      localized: true,
       required: true,
       unique: true,
     },

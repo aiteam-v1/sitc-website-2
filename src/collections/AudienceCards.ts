@@ -32,6 +32,7 @@ export const AudienceCards: CollectionConfig = {
     {
       name: 'linkUrl',
       type: 'text',
+      localized: true,
     },
     {
       name: 'sortOrder',
