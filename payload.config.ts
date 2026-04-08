@@ -11,6 +11,7 @@ import { Tenders } from './src/collections/Tenders'
 import { ImpactStats } from './src/collections/ImpactStats'
 import { AudienceCards } from './src/collections/AudienceCards'
 import { Media } from './src/collections/Media'
+import { Pages } from './src/collections/Pages'
 import { Users } from './src/collections/Users'
 
 import { GlobalSettings } from './src/globals/GlobalSettings'
@@ -31,6 +32,7 @@ export default buildConfig({
   },
   collections: [
     Media,
+    Pages,
     Users,
     Products,
     Articles,
