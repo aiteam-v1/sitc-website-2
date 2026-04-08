@@ -3,6 +3,15 @@ import type { CollectionConfig } from 'payload'
 const isSuperAdmin = ({ req: { user } }: any) => user?.role === 'super_admin'
 const isContentEditorOrAbove = ({ req: { user } }: any) =>
   user?.role === 'super_admin' || user?.role === 'content_editor'
+const canReadPages = ({ req: { user } }: any) => {
+  if (user?.role === 'super_admin' || user?.role === 'content_editor') return true
+
+  return {
+    _status: {
+      equals: 'published',
+    },
+  }
+}
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -14,7 +23,7 @@ export const Pages: CollectionConfig = {
     maxPerDoc: 10,
   },
   access: {
-    read: () => true,
+    read: canReadPages,
     create: isContentEditorOrAbove,
     update: isContentEditorOrAbove,
     delete: isSuperAdmin,

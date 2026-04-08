@@ -6,8 +6,18 @@ describe('Pages Collection', () => {
     expect(Pages.slug).toBe('pages')
   })
 
-  it('should allow public read access', () => {
-    expect(Pages.access?.read?.()).toBe(true)
+  it('should limit guest reads to published docs', () => {
+    expect(Pages.access?.read?.({ req: {} } as any)).toEqual({
+      _status: {
+        equals: 'published',
+      },
+    })
+  })
+
+  it('should allow editors to read drafts', () => {
+    expect(
+      Pages.access?.read?.({ req: { user: { role: 'content_editor' } } } as any),
+    ).toBe(true)
   })
 })
 
