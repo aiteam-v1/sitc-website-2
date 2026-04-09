@@ -8,7 +8,7 @@ export const GlobalSettings: GlobalConfig = {
   slug: 'global-settings',
   access: {
     read: () => true,
-    update: isSuperAdmin,
+    update: isContentEditorOrAbove,
   },
   fields: [
     {
@@ -33,53 +33,84 @@ export const GlobalSettings: GlobalConfig = {
       relationTo: 'media',
     },
     {
-      name: 'contactEmail',
-      type: 'text',
-      localized: true,
-    },
-    {
-      name: 'contactPhone',
-      type: 'text',
-      localized: true,
-    },
-    {
-      name: 'contactAddress',
-      type: 'text',
-      localized: true,
+      name: 'contactDetails',
+      type: 'group',
+      fields: [
+        {
+          name: 'email',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'phone',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'address',
+          type: 'textarea',
+          localized: true,
+        },
+      ],
     },
     {
       name: 'socialLinks',
-      type: 'group',
+      type: 'array',
       fields: [
-        { name: 'twitter', type: 'text' },
-      localized: true,
-        { name: 'facebook', type: 'text' },
-      localized: true,
-        { name: 'linkedin', type: 'text' },
-      localized: true,
-        { name: 'youtube', type: 'text' },
-      localized: true,
+        {
+          name: 'platform',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Twitter', value: 'twitter' },
+            { label: 'Facebook', value: 'facebook' },
+            { label: 'LinkedIn', value: 'linkedin' },
+            { label: 'YouTube', value: 'youtube' },
+            { label: 'Instagram', value: 'instagram' },
+          ],
+        },
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'label',
+          type: 'text',
+          localized: true,
+        },
       ],
     },
     {
       name: 'analyticsId',
       type: 'text',
-      localized: true,
     },
     {
-      name: 'seoTitleFormat',
-      type: 'text',
-      localized: true,
-    },
-    {
-      name: 'seoDefaultOgImage',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'seoDefaults',
+      type: 'group',
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          localized: true,
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+          localized: true,
+        },
+        {
+          name: 'defaultOgImage',
+          type: 'upload',
+          relationTo: 'media',
+        },
+      ],
     },
     {
       name: 'activeLanguages',
       type: 'select',
       hasMany: true,
+      required: true,
       options: [
         { label: 'English', value: 'en' },
         { label: 'Urdu', value: 'ur' },

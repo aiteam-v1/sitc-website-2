@@ -12,13 +12,12 @@ export const Contact: GlobalConfig = {
   fields: [
     {
       name: 'address',
-      type: 'text',
+      type: 'textarea',
       localized: true,
     },
     {
       name: 'mapEmbedUrl',
       type: 'text',
-      localized: true,
     },
     {
       name: 'departments',
@@ -28,26 +27,44 @@ export const Contact: GlobalConfig = {
           name: 'name',
           type: 'text',
           localized: true,
+          required: true,
         },
         {
           name: 'email',
+          type: 'email',
+        },
+        {
+          name: 'phone',
           type: 'text',
-      localized: true,
         },
       ],
     },
     {
       name: 'socialLinks',
-      type: 'group',
+      type: 'array',
       fields: [
-        { name: 'twitter', type: 'text' },
-      localized: true,
-        { name: 'facebook', type: 'text' },
-      localized: true,
-        { name: 'linkedin', type: 'text' },
-      localized: true,
-        { name: 'youtube', type: 'text' },
-      localized: true,
+        {
+          name: 'platform',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Twitter', value: 'twitter' },
+            { label: 'Facebook', value: 'facebook' },
+            { label: 'LinkedIn', value: 'linkedin' },
+            { label: 'YouTube', value: 'youtube' },
+            { label: 'Instagram', value: 'instagram' },
+          ],
+        },
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'label',
+          type: 'text',
+          localized: true,
+        },
       ],
     },
   ],
