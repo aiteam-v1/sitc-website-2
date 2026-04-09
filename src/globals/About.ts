@@ -38,16 +38,16 @@ export const About: GlobalConfig = {
           name: 'title',
           type: 'text',
           localized: true,
+          required: true,
         },
         {
           name: 'description',
-          type: 'text',
+          type: 'textarea',
           localized: true,
         },
         {
           name: 'icon',
           type: 'text',
-      localized: true,
         },
       ],
     },

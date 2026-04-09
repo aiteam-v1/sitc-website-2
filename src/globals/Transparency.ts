@@ -22,16 +22,22 @@ export const Transparency: GlobalConfig = {
         {
           name: 'title',
           type: 'text',
-      localized: true,
+          localized: true,
+          required: true,
         },
         {
           name: 'year',
           type: 'number',
+          required: true,
         },
         {
           name: 'document',
           type: 'upload',
           relationTo: 'media',
+          required: true,
+          filterOptions: {
+            mimeType: { in: ['application/pdf'] },
+          },
         },
       ],
     },
