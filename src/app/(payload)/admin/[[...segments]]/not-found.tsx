@@ -1,3 +1,4 @@
+import configPromise from '@payload-config'
 import { NotFoundPage } from '@payloadcms/next/views'
 import { importMap } from '../importMap'
 
@@ -5,9 +6,12 @@ type Args = {
   params: Promise<{
     segments: string[]
   }>
+  searchParams: Promise<{
+    [key: string]: string | string[]
+  }>
 }
 
-const NotFound = ({ params }: Args) =>
-  NotFoundPage({ config: import('payload/config'), importMap, params })
+const NotFound = ({ params, searchParams }: Args) =>
+  NotFoundPage({ config: configPromise, importMap, params, searchParams })
 
 export default NotFound
